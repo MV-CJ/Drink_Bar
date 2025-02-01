@@ -1,13 +1,27 @@
-import './globals.css';
+// layout.tsx
+'use client';
 
-export const metadata = {
-  title: 'Drink Craft',
-  description: 'A professional platform for baristas and cocktail enthusiasts.',
-};
+import './globals.css';
+import { useState } from 'react';
+import { LanguageProvider, useLanguage } from './context/LanguageContext' // Importando o contexto
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <LanguageProvider>
+      <LayoutWithLanguage>{children}</LayoutWithLanguage>
+    </LanguageProvider>
+  );
+}
+
+function LayoutWithLanguage({ children }: { children: React.ReactNode }) {
+  const { language, setLanguage } = useLanguage(); // Obtendo o idioma do contexto
+
+  const handleLanguageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLanguage(e.target.value);
+  };
+
+  return (
+    <html lang={language}>
       <body className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-200 min-h-screen flex flex-col">
         <header className="bg-gray-800 shadow-md text-gray-100 py-5 px-8">
           <div className="flex justify-between items-center max-w-7xl mx-auto">
@@ -27,6 +41,26 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 </li>
               </ul>
             </nav>
+            <div className="flex space-x-4">
+              <label className="text-sm text-gray-300">
+                <input
+                  type="radio"
+                  value="en"
+                  checked={language === 'en'}
+                  onChange={handleLanguageChange}
+                />
+                English
+              </label>
+              <label className="text-sm text-gray-300">
+                <input
+                  type="radio"
+                  value="fr"
+                  checked={language === 'fr'}
+                  onChange={handleLanguageChange}
+                />
+                Français
+              </label>
+            </div>
           </div>
         </header>
         <main className="flex-grow max-w-7xl mx-auto p-8">
