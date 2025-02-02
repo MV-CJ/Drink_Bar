@@ -1,9 +1,8 @@
-// layout.tsx
 'use client';
 
 import './globals.css';
 import { useState } from 'react';
-import { LanguageProvider, useLanguage } from './context/LanguageContext' // Importando o contexto
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -14,10 +13,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 }
 
 function LayoutWithLanguage({ children }: { children: React.ReactNode }) {
-  const { language, setLanguage } = useLanguage(); // Obtendo o idioma do contexto
+  const { language, changeLanguage } = useLanguage(); 
 
-  const handleLanguageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLanguage(e.target.value);
+  const handleLanguageChange = (lang: string) => {
+    changeLanguage(lang); 
   };
 
   return (
@@ -31,10 +30,7 @@ function LayoutWithLanguage({ children }: { children: React.ReactNode }) {
             <nav>
               <ul className="flex space-x-6">
                 <li>
-                  <a href="#" className="hover:text-accent-color transition duration-200">Home</a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-accent-color transition duration-200">Categories</a>
+                  <a href="/" className="hover:text-accent-color transition duration-200">Home</a>
                 </li>
                 <li>
                   <a href="#" className="hover:text-accent-color transition duration-200">Contact</a>
@@ -42,24 +38,26 @@ function LayoutWithLanguage({ children }: { children: React.ReactNode }) {
               </ul>
             </nav>
             <div className="flex space-x-4">
-              <label className="text-sm text-gray-300">
-                <input
-                  type="radio"
-                  value="en"
-                  checked={language === 'en'}
-                  onChange={handleLanguageChange}
+              <button
+                onClick={() => handleLanguageChange('en')}
+                aria-label="English"
+              >
+                <img
+                  src="/flags/bandeira-en.png"
+                  alt="English"
+                  className="w-8 h-8"
                 />
-                English
-              </label>
-              <label className="text-sm text-gray-300">
-                <input
-                  type="radio"
-                  value="fr"
-                  checked={language === 'fr'}
-                  onChange={handleLanguageChange}
+              </button>
+              <button
+                onClick={() => handleLanguageChange('fr')}
+                aria-label="Français"
+              >
+                <img
+                  src="/flags/bandeira-fr.png"
+                  alt="Français"
+                  className="w-8 h-8"
                 />
-                Français
-              </label>
+              </button>
             </div>
           </div>
         </header>

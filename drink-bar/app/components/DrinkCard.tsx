@@ -4,12 +4,14 @@ const DrinkCard = ({
   id,
   name,
   image,
-  description, // Usando o description que já foi adaptado em page.tsx
+  description, // Já está dinâmico na page.tsx
   difficulty,
   preparation_time,
   category,
   flavor,
-  country
+  country,
+  difficultyLabel, // Adicionando label dinâmica
+  waitingTimeLabel, // Adicionando label dinâmica
 }) => {
   return (
     <Link href={`/drinks/${id}`} className="rounded-lg overflow-hidden bg-gray-700 shadow-lg h-full flex flex-col">
@@ -24,7 +26,7 @@ const DrinkCard = ({
         </div>
         <div className="text-xs text-gray-400 mt-2 grid grid-cols-2 gap-y-1">
           <div className="flex items-center">
-            <p className="mr-2 text-sm text-gray-400">Difficulty:</p>
+            <p className="mr-2 text-sm text-gray-400">{difficultyLabel}:</p> {/* Agora traduzido dinamicamente */}
             {[1, 2, 3, 4, 5].map((index) => (
               <span
                 key={index}
@@ -32,7 +34,7 @@ const DrinkCard = ({
               />
             ))}
           </div>
-          <p className="text-sm text-amber-400">Waiting time: {preparation_time}m</p>
+          <p className="text-sm text-amber-400">{waitingTimeLabel}: {preparation_time}m</p> {/* Agora traduzido dinamicamente */}
           <p className="text-sm text-teal-300">{category}</p>
           <p className="text-sm text-emerald-300">{country}</p>
         </div>
@@ -42,4 +44,3 @@ const DrinkCard = ({
 };
 
 export default DrinkCard;
-
