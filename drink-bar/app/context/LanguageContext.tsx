@@ -1,26 +1,27 @@
-'use client';
-
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import Cookies from 'js-cookie';
 
-// Definindo o tipo para o valor do contexto
+// Defining the type for the context value
 interface LanguageContextType {
   language: string;
   changeLanguage: (lang: string) => void;
 }
 
-// Tipo para o componente LanguageProvider
+// Type for the LanguageProvider component
 interface LanguageProviderProps {
   children: ReactNode;
 }
 
-// Valor inicial para o contexto (o valor pode ser indefinido até que o Provider seja usado)
-const LanguageContext = createContext<LanguageContextType | null>(null);
+// Default value for the context (initializing with default language and a dummy change function)
+const LanguageContext = createContext<LanguageContextType>({
+  language: 'en', // default language
+  changeLanguage: () => {}, // dummy function for initial state
+});
 
 export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   const [language, setLanguage] = useState('en');
 
-  // Carregar idioma do cookie quando a página carregar
+  // Load language from cookie when the page loads
   useEffect(() => {
     const savedLanguage = Cookies.get('language');
     if (savedLanguage) {
@@ -28,10 +29,10 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
     }
   }, []);
 
-  // Atualizar idioma e armazenar no cookie
+  // Update language and store in the cookie
   const changeLanguage = (lang: string) => {
     setLanguage(lang);
-    Cookies.set('language', lang, { expires: 30 }); // Expira em 30 dias
+    Cookies.set('language', lang, { expires: 30 }); // Expires in 30 days
   };
 
   return (
