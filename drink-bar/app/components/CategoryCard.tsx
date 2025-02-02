@@ -1,4 +1,10 @@
-export default function CategoryCard({ name, count, color }) {
+interface CategoryCardProps {
+    name: string;
+    count: number;
+    color: string;
+}
+
+export default function CategoryCard({ name, count, color }: CategoryCardProps) {
     return (
         <div className={`rounded-lg p-6 text-white bg-gradient-to-br ${color} shadow-md`}>
             <h3 className="text-xl font-bold">{name}</h3>
