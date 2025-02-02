@@ -1,11 +1,15 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import Cookies from 'js-cookie';
 
 const LanguageContext = createContext(null);
 
-export const LanguageProvider = ({ children }) => {
+interface LanguageProviderProps {
+  children: ReactNode; // Define o tipo para 'children' como ReactNode
+}
+
+export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   const [language, setLanguage] = useState('en');
 
   // Carregar idioma do cookie quando a página carregar
@@ -17,7 +21,7 @@ export const LanguageProvider = ({ children }) => {
   }, []);
 
   // Atualizar idioma e armazenar no cookie
-  const changeLanguage = (lang) => {
+  const changeLanguage = (lang: string) => {
     setLanguage(lang);
     Cookies.set('language', lang, { expires: 30 }); // Expira em 30 dias
   };
