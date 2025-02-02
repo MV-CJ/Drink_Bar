@@ -1,4 +1,12 @@
-const ImageCard = ({ image, name, children }) => {
+import React from 'react';
+
+interface ImageCardProps {
+    image: string; // Base64 string or image URL
+    name: string;
+    children: React.ReactNode; // To allow any valid JSX content as children
+}
+
+const ImageCard = ({ image, name, children }: ImageCardProps) => {
     // Formata a imagem para garantir que o prefixo base64 está correto
     const formattedImage = image.startsWith('data:image/')
         ? image
