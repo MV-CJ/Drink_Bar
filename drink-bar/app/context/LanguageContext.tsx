@@ -3,11 +3,19 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import Cookies from 'js-cookie';
 
-const LanguageContext = createContext(null);
-
-interface LanguageProviderProps {
-  children: ReactNode; // Define o tipo para 'children' como ReactNode
+// Definindo o tipo para o valor do contexto
+interface LanguageContextType {
+  language: string;
+  changeLanguage: (lang: string) => void;
 }
+
+// Tipo para o componente LanguageProvider
+interface LanguageProviderProps {
+  children: ReactNode;
+}
+
+// Valor inicial para o contexto (o valor pode ser indefinido até que o Provider seja usado)
+const LanguageContext = createContext<LanguageContextType | null>(null);
 
 export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   const [language, setLanguage] = useState('en');
@@ -33,4 +41,10 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   );
 };
 
-export const useLanguage = () => useContext(LanguageContext);
+export const useLanguage = () => {
+  const context = useContext(LanguageContext);
+  if (!context) {
+    throw new Error('useLanguage must be used within a LanguageProvider');
+  }
+  return context;
+};
