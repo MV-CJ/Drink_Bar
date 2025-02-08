@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 interface DrinkCardProps {
-  id: string; // Assuming 'id' is a string. If it's a number, change it accordingly.
+  id: number; // Mudado para número, pois parece ser um ID numérico
   name: string;
   image: string;
   description: string;
@@ -12,6 +12,7 @@ interface DrinkCardProps {
   country: string;
   difficultyLabel: string;
   waitingTimeLabel: string;
+  language: 'en' | 'fr'; // ✅ Agora a propriedade está presente
 }
 
 const DrinkCard = ({
@@ -26,6 +27,7 @@ const DrinkCard = ({
   country,
   difficultyLabel,
   waitingTimeLabel,
+  language, // ✅ Agora incluído como prop
 }: DrinkCardProps) => {
   return (
     <Link href={`/drinks/${id}`} className="rounded-lg overflow-hidden bg-gray-700 shadow-lg h-full flex flex-col">

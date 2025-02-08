@@ -6,16 +6,55 @@ import { translations } from './translations';
 import CategoryCard from './components/CategoryCard';
 import DrinkCard from './components/DrinkCard';
 
+interface Drink {
+  id: number;
+  name: string;
+  ds_ingles: string;
+  ds_frances: string;
+  difficulty: number;
+  preparation_time: number;
+  category: string;
+  country_ingles: string;
+  country_frances: string;
+  flavor_ingles: string;
+  flavor_frances: string;
+  ingredientes_ingles: string;
+  ingredientes_frances: string;
+  instructions_ingles: string;
+  instructions_frances: string;
+  image_base64: string;
+}
+
+interface Translations {
+  en: {
+    categories: string;
+    featuredDrinks: string;
+    difficulty: string;
+    waitingTime: string;
+  };
+  fr: {
+    categories: string;
+    featuredDrinks: string;
+    difficulty: string;
+    waitingTime: string;
+  };
+  [key: string]: {
+    categories: string;
+    featuredDrinks: string;
+    difficulty: string;
+    waitingTime: string;
+  };
+}
+
 export default function Home() {
-  const { language } = useLanguage();
-  const [drinks, setDrinks] = useState([]);
-  const [categoryCounts, setCategoryCounts] = useState([]);
+  const { language } = useLanguage(); // Assuming 'language' is 'en' or 'fr'
+  const [drinks, setDrinks] = useState<Drink[]>([]);
+  const [categoryCounts, setCategoryCounts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [drinksPerPage] = useState(6);
   const [selectedCategory, setSelectedCategory] = useState('');
 
-  // Categorias com suas cores
   const categories = [
     { name: 'Cocktails', color: 'from-orange-500 to-yellow-400' },
     { name: 'Barman Specials', color: 'from-purple-600 to-blue-500' },
@@ -23,7 +62,6 @@ export default function Home() {
     { name: 'All Drinks', color: 'from-pink-500 to-red-400' },
   ];
 
-  // Buscar os drinks e a contagem das categorias
   useEffect(() => {
     const fetchDrinks = async () => {
       try {
@@ -31,15 +69,15 @@ export default function Home() {
         const response = await fetch(`/api/drinks?page=${currentPage}&limit=${drinksPerPage}${categoryQuery}`);
         const data = await response.json();
         
-        setDrinks(data.drinks);  // Atualizando a lista de drinks
-        setCategoryCounts(data.categoryCounts);  // Atualizando a contagem das categorias
+        setDrinks(data.drinks);
+        setCategoryCounts(data.categoryCounts);
       } catch (error) {
         console.error('Error fetching drinks:', error);
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchDrinks();
   }, [currentPage, selectedCategory]);
 
@@ -63,13 +101,11 @@ export default function Home() {
     return <div>Loading...</div>;
   }
 
-  // Função para alterar a categoria
   const handleCategoryChange = (category: string) => {
-    setSelectedCategory(category === selectedCategory ? '' : category); // Alterna entre a categoria selecionada ou limpa
-    setCurrentPage(1); // Reset para a primeira página
+    setSelectedCategory(category === selectedCategory ? '' : category);
+    setCurrentPage(1);
   };
 
-  // Função para alterar a página
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
@@ -78,7 +114,7 @@ export default function Home() {
     <div>
       <section>
         <h2 className="text-2xl font-bold text-gray-100 mb-6">
-          {translations[language].categories}
+          {translations[language].categories}  {/* Works correctly now */}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {categories.map((category) => {
@@ -90,8 +126,8 @@ export default function Home() {
               <CategoryCard
                 key={category.name}
                 name={category.name}
-                count={categoryCount} // Exibindo a contagem de itens
-                color={category.color} // Passando a cor para o CategoryCard
+                count={categoryCount}
+                color={category.color}
                 onClick={() => handleCategoryChange(category.name)}
               />
             );
@@ -116,7 +152,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Paginação */}
       <div className="mt-8 flex justify-center">
         <button
           className="px-4 py-2 bg-gray-300 rounded-lg"

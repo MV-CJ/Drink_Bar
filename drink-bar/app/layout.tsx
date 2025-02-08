@@ -2,7 +2,8 @@
 
 import './globals.css';
 import { useState } from 'react';
-import { LanguageProvider, useLanguage } from './context/LanguageContext';
+import { LanguageProvider, useLanguage, SupportedLanguage } from './context/LanguageContext';
+
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -15,7 +16,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 function LayoutWithLanguage({ children }: { children: React.ReactNode }) {
   const { language, changeLanguage } = useLanguage(); 
 
-  const handleLanguageChange = (lang: string) => {
+  const handleLanguageChange = (lang: SupportedLanguage) => {
     changeLanguage(lang); 
   };
 
