@@ -1,50 +1,49 @@
+import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
-import { Pool } from 'pg';
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL, // Variável de ambiente para conexão com o banco
-});
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
   const category = searchParams.get('category');
-  const page = searchParams.get('page') || 1;
-  const limit = searchParams.get('limit') || 6;
+  const page = parseInt(searchParams.get('page')) || 1;
+  const limit = parseInt(searchParams.get('limit')) || 6;
+  const offset = (page - 1) * limit;
 
   try {
-    let query;
-    let values = [];
+    let query = supabase.from('drinks').select('*');
 
     if (id) {
-      query = 'SELECT * FROM drinks WHERE id = $1';
-      values = [id];
+      query = query.eq('id', id).single();
     } else if (category) {
-      query = 'SELECT * FROM drinks WHERE category = $1 LIMIT $2 OFFSET $3';
-      values = [category, limit, (page - 1) * limit];
+      query = query.eq('category', category).range(offset, offset + limit - 1);
     } else {
-      query = 'SELECT * FROM drinks LIMIT $1 OFFSET $2';
-      values = [limit, (page - 1) * limit];
+      query = query.range(offset, offset + limit - 1);
     }
 
-    const res = await pool.query(query, values);
-    const drinks = res.rows;
+    const { data: drinks, error } = await query;
+    if (error) throw error;
 
-    // Consultar as contagens de categoria
-    const categoryCountsQuery = `
-      SELECT category, COUNT(*) as count 
-      FROM drinks 
-      GROUP BY category 
-      ORDER BY category;
-    `;
-    const categoryCountsRes = await pool.query(categoryCountsQuery);
-    const categoryCounts = categoryCountsRes.rows;
+    // Obtendo contagem de categorias corretamente
+    const { data: categoryData, error: countError } = await supabase
+      .from('drinks')
+      .select('category');
+    
+    if (countError) throw countError;
 
-    if (id && drinks.length > 0) {
-      return NextResponse.json({ drink: drinks[0] });
-    }
+    // Agrupar manualmente os resultados para contar as ocorrências por categoria
+    const categoryCounts = categoryData.reduce((acc, { category }) => {
+      acc[category] = (acc[category] || 0) + 1;
+      return acc;
+    }, {});
 
-    return NextResponse.json({ drinks, categoryCounts });
+    const categoryCountsArray = Object.entries(categoryCounts).map(([category, count]) => ({ category, count }));
+
+    return NextResponse.json(id ? { drink: drinks } : { drinks, categoryCounts: categoryCountsArray });
   } catch (error) {
     console.error('Erro ao buscar drinks:', error);
     return NextResponse.json({ error: 'Erro ao buscar drinks' }, { status: 500 });

@@ -25,31 +25,10 @@ interface Drink {
   image_base64: string;
 }
 
-interface Translations {
-  en: {
-    categories: string;
-    featuredDrinks: string;
-    difficulty: string;
-    waitingTime: string;
-  };
-  fr: {
-    categories: string;
-    featuredDrinks: string;
-    difficulty: string;
-    waitingTime: string;
-  };
-  [key: string]: {
-    categories: string;
-    featuredDrinks: string;
-    difficulty: string;
-    waitingTime: string;
-  };
-}
-
 export default function Home() {
-  const { language } = useLanguage(); // Assuming 'language' is 'en' or 'fr'
+  const { language } = useLanguage();
   const [drinks, setDrinks] = useState<Drink[]>([]);
-  const [categoryCounts, setCategoryCounts] = useState<any[]>([]);
+  const [categoryCounts, setCategoryCounts] = useState<{ category: string; count: number }[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [drinksPerPage] = useState(6);
@@ -68,9 +47,12 @@ export default function Home() {
         const categoryQuery = selectedCategory ? `&category=${selectedCategory}` : '';
         const response = await fetch(`/api/drinks?page=${currentPage}&limit=${drinksPerPage}${categoryQuery}`);
         const data = await response.json();
-        
+
+        if (!data.drinks) throw new Error('API response does not contain drinks');
+        if (!data.categoryCounts) throw new Error('API response does not contain categoryCounts');
+
         setDrinks(data.drinks);
-        setCategoryCounts(data.categoryCounts);
+        setCategoryCounts(data.categoryCounts || []); // Garante que não seja undefined
       } catch (error) {
         console.error('Error fetching drinks:', error);
       } finally {
@@ -114,13 +96,14 @@ export default function Home() {
     <div>
       <section>
         <h2 className="text-2xl font-bold text-gray-100 mb-6">
-          {translations[language].categories}  {/* Works correctly now */}
+          {translations[language].categories}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {categories.map((category) => {
-            const categoryCount = categoryCounts.find(
-              (count) => count.category === category.name
-            )?.count || 0;
+            const categoryCount =
+              (categoryCounts?.length
+                ? categoryCounts.find((count) => count.category === category.name)
+                : null)?.count || 0;
 
             return (
               <CategoryCard
