@@ -17,3 +17,4 @@ export async function GET(req) {
         return NextResponse.json({ error: 'Erro ao pingar o banco' }, { status: 500 });
     }
 }
+
