@@ -14,4 +14,4 @@ jobs:
 
       - name: Make request to Vercel API
         run: |
-          curl -X GET https://drink-bar.vercel.app/api/drink  # Corrigindo a URL
+          curl -X GET https://drink-bar.vercel.app/  # Corrigindo a URL
