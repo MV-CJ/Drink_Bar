@@ -7,13 +7,8 @@ const supabase = createClient(
 );
 
 export async function GET(req) {
-    // Verifica a autorização do cron job
-    if (req.headers.get('Authorization') !== `Bearer ${process.env.CRON_SECRET}`) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     try {
-        // Executa uma consulta simples para manter o Supabase ativo
+        // Simples consulta para verificar conexão com o banco
         await supabase.from('drinks').select('id').limit(1);
 
         return NextResponse.json({ message: 'Ping realizado com sucesso!' });
