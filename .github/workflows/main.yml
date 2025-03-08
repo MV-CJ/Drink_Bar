@@ -1,8 +1,8 @@
-name: Ping Vercel API Every 1 Minutes
+name: Ping Vercel API Every 5 Minutes
 
 on:
   schedule:
-    - cron: '*/1 * * * *'  # Isso executa o job a cada 5 minutos
+    - cron: '*/5 * * * *'  # Isso executa o job a cada 5 minutos
   workflow_dispatch:  # Isso permite que você execute manualmente o workflow se necessário
 
 jobs:
@@ -14,4 +14,4 @@ jobs:
 
       - name: Make request to Vercel API
         run: |
-          curl -X GET https://drink-bar.vercel.app//api/drink  # Substitua pela URL da sua API
+          curl -X GET https://drink-bar.vercel.app/api/drink  # Corrigindo a URL
