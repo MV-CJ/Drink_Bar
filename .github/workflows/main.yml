@@ -2,7 +2,7 @@ name: Ping Vercel API Every 5 Minutes
 
 on:
   schedule:
-    - cron: '*/5 * * * *'  # Isso executa o job a cada 5 minutos
+    - cron: '*/1 * * * *'  # Isso executa o job a cada 5 minutos
   workflow_dispatch:  # Isso permite que você execute manualmente o workflow se necessário
 
 jobs:
