@@ -3,8 +3,8 @@ import psycopg2
 
 app = Flask(__name__)
 
-# Configuração da conexão com o Supabase/PostgreSQL
-DB_URL = "postgresql://postgres:Ultrabem271!@db.zeoqyciiocmybqaqeoee.supabase.co:5432/postgres"
+# Configuração da conexão com o Neo Tech Database
+DB_URL = "postgresql://neondb_owner:npg_HN1tpnRAM7jg@ep-lively-cake-a8cyz4yz-pooler.eastus2.azure.neon.tech/neondb?sslmode=require"
 conn = psycopg2.connect(DB_URL)
 
 # Função para criar a tabela de drinks
