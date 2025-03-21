@@ -8,6 +8,8 @@ interface Translations {
     ingredients: string;
     instructions: string;
     steps: string;
+    video: string;
+    createDrink: string;
   };
   fr: {
     difficulty: string;
@@ -18,6 +20,8 @@ interface Translations {
     ingredients: string;
     instructions: string;
     steps: string;
+    video: string;
+    createDrink: string;
   };
 }
 
@@ -31,6 +35,8 @@ export const translations: Translations = {
     ingredients: 'Ingredients',
     instructions: 'Instructions',
     steps: 'Steps',
+    video: 'Video',
+    createDrink: 'Create Drink',
   },
   fr: {
     difficulty: 'Difficulté',
@@ -41,5 +47,7 @@ export const translations: Translations = {
     ingredients: 'Ingrédients',
     instructions: 'Instructions',
     steps: 'Étapes',
+    video: 'Vidéo',
+    createDrink: 'Créer un Drink',
   },
 };

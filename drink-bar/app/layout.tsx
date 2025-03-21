@@ -3,21 +3,23 @@
 import './globals.css';
 import { useState } from 'react';
 import { LanguageProvider, useLanguage, SupportedLanguage } from './context/LanguageContext';
-
+import { SessionProvider } from 'next-auth/react'; // Importe o SessionProvider
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <LanguageProvider>
-      <LayoutWithLanguage>{children}</LayoutWithLanguage>
+      <SessionProvider> {/* Adicione o SessionProvider aqui */}
+        <LayoutWithLanguage>{children}</LayoutWithLanguage>
+      </SessionProvider>
     </LanguageProvider>
   );
 }
 
 function LayoutWithLanguage({ children }: { children: React.ReactNode }) {
-  const { language, changeLanguage } = useLanguage(); 
+  const { language, changeLanguage } = useLanguage();
 
   const handleLanguageChange = (lang: SupportedLanguage) => {
-    changeLanguage(lang); 
+    changeLanguage(lang);
   };
 
   return (
