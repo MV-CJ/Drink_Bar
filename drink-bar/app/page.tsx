@@ -5,6 +5,7 @@ import { useLanguage } from './context/LanguageContext';
 import { translations } from './translations';
 import CategoryCard from './components/CategoryCard';
 import DrinkCard from './components/DrinkCard';
+import Loading from './components/Loading';
 
 interface Drink {
   id: number;
@@ -33,6 +34,7 @@ export default function Home() {
   const [currentPage, setCurrentPage] = useState(1);
   const [drinksPerPage] = useState(6);
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [totalPages, setTotalPages] = useState(1);
 
   const categories = [
     { name: 'Cocktails', color: 'from-orange-500 to-yellow-400' },
@@ -47,19 +49,24 @@ export default function Home() {
         const categoryQuery = selectedCategory ? `&category=${selectedCategory}` : '';
         const response = await fetch(`/api/drinks?page=${currentPage}&limit=${drinksPerPage}${categoryQuery}`);
         const data = await response.json();
-
+  
         if (!data.drinks) throw new Error('API response does not contain drinks');
         if (!data.categoryCounts) throw new Error('API response does not contain categoryCounts');
-
+  
+        console.log('Drinks data:', data.drinks);
+        console.log('Category Counts:', data.categoryCounts);
+  
         setDrinks(data.drinks);
-        setCategoryCounts(data.categoryCounts || []); // Garante que não seja undefined
+        setCategoryCounts((prevCounts) => prevCounts.length === 0 ? data.categoryCounts : prevCounts);
+        setTotalPages(Math.ceil(data.total / drinksPerPage));
+        
       } catch (error) {
         console.error('Error fetching drinks:', error);
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchDrinks();
   }, [currentPage, selectedCategory]);
 
@@ -80,12 +87,13 @@ export default function Home() {
   }));
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   const handleCategoryChange = (category: string) => {
+    setLoading(true);
     setSelectedCategory(category === selectedCategory ? '' : category);
-    setCurrentPage(1);
+    setCurrentPage(1); // Resetar para a primeira página
   };
 
   const handlePageChange = (pageNumber: number) => {
@@ -100,10 +108,12 @@ export default function Home() {
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {categories.map((category) => {
-            const categoryCount =
-              (categoryCounts?.length
-                ? categoryCounts.find((count) => count.category === category.name)
-                : null)?.count || 0;
+            const match = categoryCounts?.find(
+              (countObj) => countObj.category.toLowerCase() === category.name.toLowerCase()
+            );
+            const categoryCount: number = match ? parseInt(String(match.count), 10) || 0 : 0;
+
+            console.log('Category:', category.name, 'Count:', categoryCount);
 
             return (
               <CategoryCard
@@ -117,22 +127,29 @@ export default function Home() {
           })}
         </div>
       </section>
-
+      <br />
+      <hr />
       <section className="mt-12">
         <h2 className="text-2xl font-bold text-gray-100 mb-6">
           {translations[language].featuredDrinks}
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {featuredDrinks.map((drink) => (
-            <DrinkCard
-              key={drink.id}
-              {...drink}
-              language={language}
-              difficultyLabel={translations[language].difficulty}
-              waitingTimeLabel={translations[language].waitingTime}
-            />
-          ))}
-        </div>
+        {loading ? (
+          <div className="flex justify-center">
+            <div className="w-10 h-10 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {featuredDrinks.map((drink) => (
+              <DrinkCard
+                key={drink.id}
+                {...drink}
+                language={language}
+                difficultyLabel={translations[language].difficulty}
+                waitingTimeLabel={translations[language].waitingTime}
+              />
+            ))}
+          </div>
+        )}
       </section>
 
       <div className="mt-8 flex justify-center">
@@ -147,6 +164,7 @@ export default function Home() {
         <button
           className="px-4 py-2 bg-gray-300 rounded-lg"
           onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
         >
           Next
         </button>

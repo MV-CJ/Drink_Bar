@@ -13,3 +13,31 @@ body {
   @apply bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-200;
   font-family: 'Roboto', sans-serif;
 }
+
+@keyframes wave {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes bubble {
+  0% { transform: translateY(0); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateY(-20px); opacity: 0; }
+}
+
+.animate-wave {
+  animation: wave 2s infinite ease-in-out;
+}
+
+.animate-bubble {
+  animation: bubble 1.5s infinite ease-in-out;
+}
+
+.animate-bubble-delay {
+  animation: bubble 1.5s infinite ease-in-out 0.5s;
+}
+
+.animate-bubble-delay-2 {
+  animation: bubble 1.5s infinite ease-in-out 0.75s;
+}
